@@ -1,0 +1,76 @@
+version: '3.8'
+services:
+  db:
+    platform: linux/x86_64
+    # 2022年5月26日時点の最新版
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+
+    ports:
+      - "3307:3306"
+      # コンテナの中身を保存しておくために作成したボリュームでマウント
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: ./backend
+      args:
+        WORKDIR: $WORKDIR
+    # platform: linux/amd64
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    # command: bundle exec puma -C config/puma.rb
+    volumes:
+      - "./backend:/$WORKDIR"
+
+      # - ./backend:/by_Shuhei_Nakada-2
+      # コンテナの中身を保存しておくために作成したボリュームでマウント
+      - public-data:/by_Shuhei_Nakada-2/public
+      - tmp-data:/by_Shuhei_Nakada-2/tmp
+      - log-data:/by_Shuhei_Nakada-2/log
+    # environment:
+    #   POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - "8000:3000"    
+    depends_on:
+      - db
+  # web:
+  #   build:
+  #     context: ./web/nginx
+  #   volumes:
+  #     - public-data:/by_Shuhei_Nakada-2/public
+  #     - tmp-data:/by_Shuhei_Nakada-2/tmp
+  #     - node_modules-store:/by_Shuhei_Nakada-2/node_modules
+  #   ports:
+  #     - 80:80
+  #   depends_on:
+  #     - backend
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     args:
+  #       WORKDIR: $WORKDIR
+  #   volumes:
+  #     - "./frontend:/$WORKDIR"
+  #     - ../workspace:/by_Shuhei_Nakada-2/www
+  #     - public-data:/by_Shuhei_Nakada-2/public
+  #     - tmp-data:/by_Shuhei_Nakada-2/tmp
+  #   environment:
+  #     POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+  #   ports:
+  #     - "5173:5173"
+  #   depends_on:
+  #     - backend
+volumes:
+  bundle-data:
+  public-data:
+  tmp-data:
+  log-data:
+  db-data:
+  node_modules-store:
+  vendor-store:
+  node_modules:
+    driver: local
