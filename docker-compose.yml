@@ -48,22 +48,22 @@ services:
   #     - 80:80
   #   depends_on:
   #     - backend
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     args:
-  #       WORKDIR: $WORKDIR
-  #   volumes:
-  #     - "./frontend:/$WORKDIR"
-  #     - ../workspace:/by_Shuhei_Nakada-2/www
-  #     - public-data:/by_Shuhei_Nakada-2/public
-  #     - tmp-data:/by_Shuhei_Nakada-2/tmp
-  #   environment:
-  #     POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-  #   ports:
-  #     - "5173:5173"
-  #   depends_on:
-  #     - backend
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        WORKDIR: $WORKDIR
+    volumes:
+      - "./frontend:/$WORKDIR"
+      - ../workspace:/by_Shuhei_Nakada-2/www
+      - public-data:/by_Shuhei_Nakada-2/public
+      - tmp-data:/by_Shuhei_Nakada-2/tmp
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 volumes:
   bundle-data:
   public-data:
